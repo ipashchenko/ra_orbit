@@ -83,7 +83,7 @@ with model:
     tr = pymc3.sample(10000, tune=500, start=start, step=[step1, step2])
 
 pymc3.traceplot(tr[1000:])
-plt.savefig('mcmc_test.png', bbox_inches='tight')
+plt.savefig('mcmc.png', bbox_inches='tight')
 # plot one plot for all stations
 ground_stations = set(df['st2'])
 colors = ('b', 'g', 'r', 'c', 'm', 'y', 'k')
@@ -99,4 +99,4 @@ plt.axvline(sorted(df['datetime'])[0] + pd.Timedelta('{} days'.format(low)))
 plt.axvline(sorted(df['datetime'])[0] + pd.Timedelta('{} days'.format(high)))
 plt.gcf().autofmt_xdate()
 fig.show()
-fig.savefig('test1', bbox_inches='tight')
+fig.savefig('res_rate_switchpoint_95perc.png', bbox_inches='tight')
