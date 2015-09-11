@@ -62,6 +62,8 @@ df['timedelta'] = [int(dt.days) for dt in df['timedelta']]
 # hierarchical model.
 # FIXME: Use t-distribution for likelihood
 with pymc3.Model() as model:
+    # Prior for dof
+    nu = pymc3.Exponential('nu', 0.1)
     # Prior for distribution of switchpoint location
     switchpoint = pymc3.DiscreteUniform('switchpoint', lower=0,
                                         upper=max(df['timedelta']))
@@ -75,15 +77,15 @@ with pymc3.Model() as model:
     std = pymc3.switch(switchpoint >= idx, early_std, late_std)
 
     # Data likelihood
-    total_rates = pymc3.Normal('total_rates', mu=0., sd=std,
-                               observed=3. * 10 ** 10 * df['total_rate'])
+    total_rates = pymc3.T('total_rates', nu=nu, mu=0., lam=std,
+                          observed=3. * 10 ** 10 * df['total_rate'])
 
 with model:
     # Initial values for stochastic nodes
-    start = {'early_std': 3., 'late_std': 0.5}
+    start = {'early_std': 3., 'late_std': 0.5, 'nu': 3}
     # Use slice sampler for means
     step1 = pymc3.Slice([early_std, late_std])
     # Use Metropolis for switchpoint, since it accomodates discrete variables
-    step2 = pymc3.Metropolis([switchpoint])
+    step2 = pymc3.Metropolis([switchpoint, nu])
 
     tr = pymc3.sample(10000, tune=500, start=start, step=[step1, step2])
