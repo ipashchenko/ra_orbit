@@ -142,8 +142,10 @@ def model_tr(p, timestamps):
 t1 = sorted(df['datetime'])[0]
 t2 = sorted(df['datetime'])[-1]
 tt = pd.date_range(start=t1, end=t2, freq='D')
-p = [0.51, 1.885*10**(-7), 0.50, 0.771*10**(-8), -1.13, 0.153, 0.775, -0.21,
-     -2.04]
+# It works for symmetric posteriors. Actually, we don't need single value.
+p = np.mean(sampler.flatchain[::100, :], axis=0)
+# p = [0.51, 1.885*10**(-7), 0.50, 0.771*10**(-8), -1.13, 0.153, 0.775, -0.21,
+#      -2.04]
 
 # Plot 100 samples from posterior for full model and linear trend
 samples = sampler.flatchain
