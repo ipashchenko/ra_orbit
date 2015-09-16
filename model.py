@@ -20,6 +20,7 @@ t = np.array(df['timedelta'])
 y = df['total_rate']
 
 
+# See http://dan.iel.fm/posts/mixture-models/
 # Define the probabilistic model...
 # A simple prior:
 bounds = [(0.0, 5.0), (0.0, 10 ** (-5)), (0, 2 * np.pi), (-2.0, 2.0),
