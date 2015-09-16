@@ -31,21 +31,6 @@ df = pd.read_table(os.path.join(data_dir, data_file), delim_whitespace=True,
                           'rate_off1', 'rate_off2', 'total_rate', 'snr'])
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
 
-# # Plot several subplots for each ground stations
-# fig, axes = plt.subplots(nrows=len(ground_stations), ncols=1, sharex=True,
-#                          sharey=True)
-# fig.set_size_inches(18.5, 18.5)
-# plt.rcParams.update({'axes.titlesize': 'medium'})
-#
-# for i, ground_station in enumerate(ground_stations):
-#     print i
-#     axes[i].plot(df[df['st2'] == ground_station]['datetime'],
-#                 df[df['st2'] == ground_station]['total_rate'] * 3. * 10 ** 10,
-#                     '.{}'.format(colors[i]), label=ground_station)
-#     axes[i].legend(prop={'size': 11}, loc='best', fancybox=True,
-#                       framealpha=0.5)
-# fig.show()
-
 # Fit changepoint problem
 # Convert datetime to timedelta
 df['timedelta'] = df['datetime'] - sorted(df['datetime'])[0]
@@ -87,6 +72,23 @@ plt.savefig('mcmc.png', bbox_inches='tight')
 # plot one plot for all stations
 ground_stations = set(df['st2'])
 colors = ('b', 'g', 'r', 'c', 'm', 'y', 'k')
+
+# Plot several subplots for each ground stations
+fig, axes = plt.subplots(nrows=len(ground_stations), ncols=1, sharex=True,
+                         sharey=True)
+fig.set_size_inches(18.5, 18.5)
+plt.rcParams.update({'axes.titlesize': 'medium'})
+
+for i, ground_station in enumerate(ground_stations):
+    print i
+    axes[i].plot(df[df['st2'] == ground_station]['datetime'],
+                 df[df['st2'] == ground_station]['total_rate'] * 3. * 10 ** 10,
+                 '.{}'.format(colors[i]), label=ground_station)
+    axes[i].legend(prop={'size': 11}, loc='best', fancybox=True,
+                   framealpha=0.5)
+fig.show()
+
+
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 for i, ground_station in enumerate(ground_stations):
