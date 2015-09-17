@@ -124,6 +124,15 @@ for i in range(sampler.chain.shape[1]):
         norm += 1
 post_prob /= norm
 
+# Save outliers
+df_out = df[post_prob < 0.1]
+df_out.drop(['rate_off1', 'rate_off2', 'timedelta', 'timedelta_sec',
+             'total_rate'], axis=1, inplace=True)
+df_out.sort(columns='datetime', axis=0, ascending=True, inplace=True,
+            kind='quicksort', na_position='last')
+df_out.to_csv(r'/home/ilya/Dropbox/petya/outliers.txt', header=None, index=None,
+              sep=' ', mode='a')
+
 
 def model_(p, timestamps):
     a, w, fi_0, ab, b, yerr, _, _, _ = p
